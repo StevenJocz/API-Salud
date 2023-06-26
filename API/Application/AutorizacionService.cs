@@ -48,7 +48,7 @@ namespace UNAC.AppSalud.API.Application
 
             var claims = new ClaimsIdentity();
             claims.AddClaim(new Claim("userId", IdUsuario));
-            claims.AddClaim(new Claim("userName", "Hamilton Espinal"));
+            claims.AddClaim(new Claim("userName", "Hamilton Espinal Areiza"));
             claims.AddClaim(new Claim("userEmail", usuario.userEmail));
             claims.AddClaim(new Claim("userPhone", "3043461586"));
 

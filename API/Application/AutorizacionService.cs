@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -40,14 +41,23 @@ namespace UNAC.AppSalud.API.Application
             var key = _configuration.GetValue<string>("JwtSettings:key");
             var keyBytes = Encoding.ASCII.GetBytes(key);
 
+
+            var usuario = _context.LoginEs.FirstOrDefault(x =>
+                x.IdLogin == int.Parse(IdUsuario)   
+            );
+
             var claims = new ClaimsIdentity();
-            claims.AddClaim(new Claim(ClaimTypes.NameIdentifier, IdUsuario));
+            claims.AddClaim(new Claim("userId", IdUsuario));
+            claims.AddClaim(new Claim("userName", "Hamilton Espinal"));
+            claims.AddClaim(new Claim("userEmail", usuario.userEmail));
+            claims.AddClaim(new Claim("userPhone", "3043461586"));
 
 
-            var credencialesToken = new SigningCredentials(
+            var credencialesToken = new SigningCredentials
+            (
                new SymmetricSecurityKey(keyBytes),
                SecurityAlgorithms.HmacSha256Signature
-               );
+            );
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -103,7 +113,6 @@ namespace UNAC.AppSalud.API.Application
         }
 
 
-
         public async  Task<AutorizacionResponse> DevolverToken(LoginDTOs autorizacion) 
         { 
             var usuario_Encontrado = _context.LoginEs.FirstOrDefault(x => 
@@ -113,19 +122,16 @@ namespace UNAC.AppSalud.API.Application
 
             if (usuario_Encontrado ==  null )
             {
-                return await Task.FromResult<AutorizacionResponse>(null);
+                return  new AutorizacionResponse()
+                {
+                    Resultado = false,
+                    Msg = "Correo electrónico o contraseña inválidos. Por favor, verifica la información ingresada."
+                };
             }
 
             string tokenCreado = GenerarToken(usuario_Encontrado.IdLogin.ToString());
 
             string refreshTokenCreado = GenerarResfreshToken();
-
-            //return new AutorizacionResponse()
-            //{
-            //    Token = tokenCreado,
-            //    Resultado = true,
-            //    Msg = "Ok"
-            //};
 
             return await GuardarHistorialRefreshToken(usuario_Encontrado.IdLogin, tokenCreado, refreshTokenCreado);
 

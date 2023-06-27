@@ -14,6 +14,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+var proveedor = builder.Services.BuildServiceProvider();
+var configuration = proveedor.GetRequiredService<IConfiguration>();
+
+builder.Services.AddCors(opciones =>
+{
+    var fronedUrl = configuration.GetValue<string>("frontendUrl");
+    opciones.AddDefaultPolicy(builder => {
+        builder.WithOrigins(fronedUrl).AllowAnyMethod().AllowAnyHeader();
+    });
+});
+
 builder.Services.AddStartupSetup(builder.Configuration);
 
 var app = builder.Build();
@@ -26,7 +38,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors();
 app.UseAuthentication();
 
 app.UseAuthorization();

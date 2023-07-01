@@ -16,9 +16,7 @@ namespace UNAC.AppSalud.API.Application
     {
         Task<AutorizacionResponse> DevolverToken(LoginDTOs autorizacion);
         Task<AutorizacionResponse> DevolverRefreshToken(HistorialrefreshtokenDTOs refreshtoken, int IdUsuario);
-
     }
-
 
     public class AutorizacionService : IAutorizacionService
     {
@@ -38,121 +36,133 @@ namespace UNAC.AppSalud.API.Application
 
         private string GenerarToken(string IdUsuario)
         {
-            var key = _configuration.GetValue<string>("JwtSettings:key");
-            var keyBytes = Encoding.ASCII.GetBytes(key);
-
-
-            var usuario = _context.LoginEs.FirstOrDefault(x =>
-                x.IdLogin == int.Parse(IdUsuario)   
-            );
-
-            var claims = new ClaimsIdentity();
-            claims.AddClaim(new Claim("userId", IdUsuario));
-            claims.AddClaim(new Claim("userName", "Hamilton Espinal Areiza"));
-            claims.AddClaim(new Claim("userEmail", usuario.userEmail));
-            claims.AddClaim(new Claim("userPhone", "3043461586"));
-
-
-            var credencialesToken = new SigningCredentials
-            (
-               new SymmetricSecurityKey(keyBytes),
-               SecurityAlgorithms.HmacSha256Signature
-            );
-
-            var tokenDescriptor = new SecurityTokenDescriptor
+            try
             {
-                Subject = claims,
-                Expires = DateTime.UtcNow.AddMinutes(1),
-                SigningCredentials = credencialesToken
-            };
+                _logger.LogInformation("Iniciando GenerarToken");
+                var key = _configuration.GetValue<string>("JwtSettings:key");
+                var keyBytes = Encoding.ASCII.GetBytes(key);
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenConfig = tokenHandler.CreateToken(tokenDescriptor);
+                var usuario = _context.LoginEs.FirstOrDefault(x =>
+                    x.IdLogin == int.Parse(IdUsuario)
+                );
 
-            string tokenCreado = tokenHandler.WriteToken(tokenConfig);
+                var claims = new ClaimsIdentity();
+                claims.AddClaim(new Claim("userId", IdUsuario));
+                claims.AddClaim(new Claim("userName", "Hamilton Espinal Areiza"));
+                claims.AddClaim(new Claim("userEmail", usuario.userEmail));
+                claims.AddClaim(new Claim("userPhone", "3043461586"));
 
-            return tokenCreado;
-        }
+                var credencialesToken = new SigningCredentials
+                (
+                   new SymmetricSecurityKey(keyBytes),
+                   SecurityAlgorithms.HmacSha256Signature
+                );
 
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = claims,
+                    Expires = DateTime.UtcNow.AddMinutes(1),
+                    SigningCredentials = credencialesToken
+                };
 
-        private string GenerarResfreshToken()
-        {
-            var byteArray = new byte[64];
-            var refreshToken = "";
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var tokenConfig = tokenHandler.CreateToken(tokenDescriptor);
 
-            using (var mg = RandomNumberGenerator.Create())
-            {
-                mg.GetBytes(byteArray);
-                refreshToken = Convert.ToBase64String(byteArray);
+                string tokenCreado = tokenHandler.WriteToken(tokenConfig);
+
+                return tokenCreado;
             }
-            return refreshToken;
+            catch (Exception)
+            {
+                _logger.LogError("Error al iniciar GenerarToken");
+                throw;
+            }
+            
         }
 
-        private async Task<AutorizacionResponse> GuardarHistorialRefreshToken(int IdUsuario, string Token, string refreshToken)
+
+        private async Task<AutorizacionResponse> GuardarHistorialRefreshToken(int IdUsuario, string Token)
         {
-            var historialRefreshToken = new HistorialrefreshtokenE
+            try
             {
-                idhistorialtoken = 0,
-                idusuario = IdUsuario,
-                token = Token,
-                refreshtoken = refreshToken,
-                fechacreacion = DateTime.UtcNow,
-                fechaexpiracion = DateTime.UtcNow.AddMinutes(2)
+                _logger.LogInformation("Iniciando GuardarHistorialRefreshToken");
+                var historialRefreshToken = new HistorialrefreshtokenE
+                {
+                    idhistorialtoken = 0,
+                    idusuario = IdUsuario,
+                    token = Token,
+                    fechacreacion = DateTime.UtcNow,
+                    fechaexpiracion = DateTime.UtcNow.AddMinutes(2)
+                };
 
-            };
+                await _context.HistorialrefreshtokenEs.AddAsync(historialRefreshToken);
+                await _context.SaveChangesAsync();
 
-            await _context.HistorialrefreshtokenEs.AddAsync(historialRefreshToken);
-            await _context.SaveChangesAsync();
-
-            return new AutorizacionResponse { 
-                Token = Token,
-                RefreshToken = refreshToken,
-                Resultado = true,
-                Msg = "Ok"
-            };
+                return new AutorizacionResponse
+                {
+                    Token = Token,
+                    Resultado = true,
+                    Msg = "Ok"
+                };
+            }
+            catch (Exception)
+            {
+                _logger.LogError("Error al iniciar GuardarHistorialRefreshToken");
+                throw;
+            }
         }
 
 
         public async  Task<AutorizacionResponse> DevolverToken(LoginDTOs autorizacion) 
-        { 
-            var usuario_Encontrado = _context.LoginEs.FirstOrDefault(x => 
-                x.userEmail == autorizacion.userEmail && 
+        {
+            try
+            {
+                _logger.LogInformation("Iniciando DevolverToken");
+                var usuario_Encontrado = _context.LoginEs.FirstOrDefault(x =>
+                x.userEmail == autorizacion.userEmail &&
                 x.userPassword == autorizacion.userPassword
             );
 
-            if (usuario_Encontrado ==  null )
-            {
-                return  new AutorizacionResponse()
+                if (usuario_Encontrado == null)
                 {
-                    Resultado = false,
-                    Msg = "Correo electrónico o contraseña inválidos. Por favor, verifica la información ingresada."
-                };
+                    return new AutorizacionResponse()
+                    {
+                        Resultado = false,
+                        Msg = "Correo electrónico o contraseña inválidos. Por favor, verifica la información ingresada."
+                    };
+                }
+
+                string tokenCreado = GenerarToken(usuario_Encontrado.IdLogin.ToString());
+
+                return await GuardarHistorialRefreshToken(usuario_Encontrado.IdLogin, tokenCreado);
             }
-
-            string tokenCreado = GenerarToken(usuario_Encontrado.IdLogin.ToString());
-
-            string refreshTokenCreado = GenerarResfreshToken();
-
-            return await GuardarHistorialRefreshToken(usuario_Encontrado.IdLogin, tokenCreado, refreshTokenCreado);
-
+            catch (Exception)
+            {
+                _logger.LogError("Error al iniciar DevolverToken");
+                throw;
+            }
         }
 
         public async Task<AutorizacionResponse> DevolverRefreshToken(HistorialrefreshtokenDTOs refreshtoken, int IdUsuario)
         {
-            var refreshTokenEncontrado = _context.HistorialrefreshtokenEs.FirstOrDefault(x => 
-            x.token == refreshtoken.Token &&  
-            x.refreshtoken == refreshtoken.RefreshToken &&
-            x.idusuario == IdUsuario );
+            try
+            {
+                _logger.LogInformation("Iniciando DevolverRefreshToken");
+                var refreshTokenEncontrado = _context.HistorialrefreshtokenEs.FirstOrDefault(x =>
+                    x.token == refreshtoken.Token &&
+                    x.idusuario == IdUsuario);
 
-            if (refreshTokenEncontrado == null)
-                return new AutorizacionResponse { Resultado = false, Msg = "No existe refreshToken" };
+                if (refreshTokenEncontrado == null)
+                    return new AutorizacionResponse { Resultado = false, Msg = "No existe Token" };
 
-            var refreshTokenCreado = GenerarResfreshToken();
-            var tokenCreado = GenerarToken(IdUsuario.ToString());
-
-            return await GuardarHistorialRefreshToken(IdUsuario, tokenCreado, refreshTokenCreado);
+                var tokenCreado = GenerarToken(IdUsuario.ToString());
+                return await GuardarHistorialRefreshToken(IdUsuario, tokenCreado);
+            }
+            catch (Exception)
+            {
+                _logger.LogError("Error al iniciar DevolverRefreshToken");
+                throw;
+            }
         }
     }
-
-    
 }

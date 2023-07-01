@@ -13,7 +13,6 @@ namespace UNAC.AppSalud.Infrastructure
             _connection = connection;
         }
 
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql(_connection);

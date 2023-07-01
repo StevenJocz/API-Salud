@@ -16,7 +16,6 @@ namespace UNAC.AppSalud.Domain.Entities
         public int idhistorialtoken { get; set; }
         public int idusuario { get; set; }
         public string token { get; set; }
-        public string refreshtoken { get; set; }
         public DateTime fechacreacion { get; set; }
         public DateTime fechaexpiracion { get; set; }
     }

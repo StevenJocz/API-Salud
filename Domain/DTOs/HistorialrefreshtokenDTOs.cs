@@ -14,7 +14,6 @@ namespace UNAC.AppSalud.Domain.DTOs
         public int IdHistorialToken { get; set; }
         public int IdUsuario { get; set; }
         public string Token { get; set; }
-        public string RefreshToken { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaExpiracion { get; set; }
 
@@ -25,7 +24,6 @@ namespace UNAC.AppSalud.Domain.DTOs
                 IdHistorialToken = historialrefreshtoken.idhistorialtoken,
                 IdUsuario = historialrefreshtoken.idusuario,
                 Token = historialrefreshtoken.token,
-                RefreshToken = historialrefreshtoken.refreshtoken,
                 FechaCreacion = historialrefreshtoken.fechacreacion,
                 FechaExpiracion = historialrefreshtoken.fechaexpiracion,
             };

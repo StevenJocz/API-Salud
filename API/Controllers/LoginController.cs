@@ -12,20 +12,31 @@ namespace UNAC.AppSalud.API.Controllers
     public class LoginController : ControllerBase
     {
         private readonly IAutorizacionService _autorizacionService;
+        private readonly ILogger<LoginController> _logger;
 
-        public LoginController(IAutorizacionService autorizacionService)
+        public LoginController(IAutorizacionService autorizacionService, ILogger<LoginController> logger)
         {
             _autorizacionService = autorizacionService;
+            _logger = logger;
         }
 
 
         [HttpPost("login")]
         public async Task<IActionResult> Autenticar([FromBody] LoginDTOs autorizacion)
         {
-            var resultado_autorizacion = await _autorizacionService.DevolverToken(autorizacion);
-            if (resultado_autorizacion == null)
-                return Unauthorized();
-            return Ok(resultado_autorizacion);
+            try
+            {
+                _logger.LogInformation("Iniciando Autenticar.Controller");
+                var resultado_autorizacion = await _autorizacionService.DevolverToken(autorizacion);
+                if (resultado_autorizacion == null)
+                    return Unauthorized();
+                return Ok(resultado_autorizacion);
+            }
+            catch (Exception)
+            {
+                _logger.LogError("Error al iniciar Autenticar.Controller");
+                throw;
+            }
         }
 
 
@@ -33,22 +44,28 @@ namespace UNAC.AppSalud.API.Controllers
         [HttpPost("ObtenerToken")]
         public async Task<IActionResult> ObtenerToken([FromBody] HistorialrefreshtokenDTOs refreshtoken)
         {
-           var tokenHandler = new JwtSecurityTokenHandler();
-           var tokenExpiradoSupuestamente = tokenHandler.ReadJwtToken(refreshtoken.Token);
+            try
+            {
+                _logger.LogInformation("Iniciando ObtenerToken.Controller");
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var tokenExpiradoSupuestamente = tokenHandler.ReadJwtToken(refreshtoken.Token);
 
-            if (tokenExpiradoSupuestamente.ValidTo > DateTime.UtcNow)
-                return BadRequest(new AutorizacionResponse { Resultado = false, Msg = "Token no ha expirado" });
+                if (tokenExpiradoSupuestamente.ValidTo > DateTime.UtcNow)
+                    return BadRequest(new AutorizacionResponse { Resultado = false, Msg = "Token no ha expirado" });
 
-            string idUsuario = tokenExpiradoSupuestamente.Claims.First(x => 
-                x.Type == JwtRegisteredClaimNames.NameId).Value.ToString();
+                string idUsuario = tokenExpiradoSupuestamente.Payload["userId"].ToString();
 
-            var autorizacionResponse = await _autorizacionService.DevolverRefreshToken(refreshtoken, int.Parse(idUsuario));
+                var autorizacionResponse = await _autorizacionService.DevolverRefreshToken(refreshtoken, int.Parse(idUsuario));
 
-            if (autorizacionResponse.Resultado)
-                return Ok(autorizacionResponse);
-            else return BadRequest(autorizacionResponse);
-
-
+                if (autorizacionResponse.Resultado)
+                    return Ok(autorizacionResponse);
+                else return BadRequest(autorizacionResponse);
+            }
+            catch (Exception)
+            {
+                _logger.LogError("Error al iniciar ObtenerToken.Controller");
+                throw;
+            }
         }
     }
 }

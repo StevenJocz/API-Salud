@@ -18,9 +18,16 @@ Sigue estos pasos para instalar y configurar el proyecto:
 3. Restaura las dependencias: `dotnet restore`
 4. Compila el proyecto: `dotnet build`
 
+## Licencia
+Este proyecto está bajo la Licencia [nombre de la licencia]. Consulta el archivo LICENSE para obtener más información.
+
+##  Contacto
+Si tienes alguna pregunta o sugerencia sobre el proyecto, no dudes en contactarme en tu-email@example.com.
+
 ## Uso
 
 Aquí puedes proporcionar ejemplos y descripciones de cómo utilizar tu proyecto:
 
 ```csharp
 // Código de ejemplo
+

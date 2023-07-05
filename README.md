@@ -15,7 +15,7 @@ Sigue estos pasos para instalar y configurar el proyecto:
 
 1. Clona el repositorio: `git clone https://github.com/tu-usuario/tu-proyecto.git`
 2. Ve al directorio del proyecto: `cd tu-proyecto`
-3. Restaura las dependencias: `dotnet restore`
+3. Restaura las dependencias y paquetes NuGet: `dotnet restore`
 4. Compila el proyecto: `dotnet build`
 
 ## Licencia

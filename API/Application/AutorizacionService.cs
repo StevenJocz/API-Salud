@@ -6,8 +6,11 @@ using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using UNAC.AppSalud.Domain.DTOs;
+using UNAC.AppSalud.Domain.DTOs.Login;
+using UNAC.AppSalud.Domain.DTOs.Login.LoginDTOs;
+using UNAC.AppSalud.Domain.DTOs.LoginDTOs.LoginDTOs;
 using UNAC.AppSalud.Domain.Entities;
+using UNAC.AppSalud.Domain.Entities.LoginE;
 using UNAC.AppSalud.Infrastructure;
 
 namespace UNAC.AppSalud.API.Application
@@ -28,11 +31,9 @@ namespace UNAC.AppSalud.API.Application
         {
             _logger = logger;
             _configuration = configuration;
-            _logger.LogTrace("Iniciando clase EmpleadoQueries...");
             string? connectionString = _configuration.GetConnectionString("Connection_Salud");
             _context = new SaludDbContext(connectionString);
         }
-
 
         private string GenerarToken(string IdUsuario)
         {
@@ -48,9 +49,8 @@ namespace UNAC.AppSalud.API.Application
 
                 var claims = new ClaimsIdentity();
                 claims.AddClaim(new Claim("userId", IdUsuario));
-                claims.AddClaim(new Claim("userName", "Hamilton Espinal Areiza"));
+                claims.AddClaim(new Claim("userName", usuario.user_name));
                 claims.AddClaim(new Claim("userEmail", usuario.userEmail));
-                claims.AddClaim(new Claim("userPhone", "3043461586"));
 
                 var credencialesToken = new SigningCredentials
                 (
@@ -77,7 +77,6 @@ namespace UNAC.AppSalud.API.Application
                 _logger.LogError("Error al iniciar GenerarToken");
                 throw;
             }
-            
         }
 
 

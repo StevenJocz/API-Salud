@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UNAC.AppSalud.Domain.DTOs
+namespace UNAC.AppSalud.Domain.Entities.LoginE
 {
     [Table("login")]
     public class LoginE
@@ -15,6 +15,7 @@ namespace UNAC.AppSalud.Domain.DTOs
         public int IdLogin { get; set; }
         public string userEmail { get; set; }
         public string userPassword { get; set; }
-       
+        public string user_name { get; set; }
+
     }
 }

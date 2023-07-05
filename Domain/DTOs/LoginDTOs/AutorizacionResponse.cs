@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UNAC.AppSalud.Domain.DTOs
+namespace UNAC.AppSalud.Domain.DTOs.LoginDTOs.LoginDTOs
 {
     public class AutorizacionResponse
     {

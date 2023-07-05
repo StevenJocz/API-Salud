@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using UNAC.AppSalud.Infrastructure.EmailServices;
+using UNAC.AppSalud.Persistence.Commands.LoginCommands;
+using UNAC.AppSalud.Persistence.Queries.LoginQueries;
 
 namespace UNAC.AppSalud.API.Application
 {
@@ -8,7 +11,20 @@ namespace UNAC.AppSalud.API.Application
     {
         public static IServiceCollection AddStartupSetup(this IServiceCollection service, IConfiguration configuration)
         {
+            // Autorizacion Services
             service.AddTransient<IAutorizacionService, AutorizacionService>();
+
+            // Email Services
+            service.AddTransient<IEmailServices, EmailServices>();
+
+            // Queries Persistance Services
+            service.AddTransient<ILoginQueries, LoginQueries>();
+
+            // Commands Persistance Services
+            service.AddTransient<ILoginCommands, LoginCommands>();
+
+
+            // Authentication Services
             var key = configuration.GetValue<string>("JwtSettings:key");
             var keyBytes = Encoding.ASCII.GetBytes(key);
 

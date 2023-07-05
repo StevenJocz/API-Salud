@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UNAC.AppSalud.Domain.Entities
+namespace UNAC.AppSalud.Domain.Entities.LoginE
 {
     [Table("historialrefreshtoken")]
     public class HistorialrefreshtokenE

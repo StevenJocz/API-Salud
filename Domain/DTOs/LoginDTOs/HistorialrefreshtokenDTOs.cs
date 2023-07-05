@@ -4,13 +4,13 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UNAC.AppSalud.Domain.Entities;
+using UNAC.AppSalud.Domain.Entities.LoginE;
 
-namespace UNAC.AppSalud.Domain.DTOs
+namespace UNAC.AppSalud.Domain.DTOs.LoginDTOs.LoginDTOs
 {
     public class HistorialrefreshtokenDTOs
     {
-       
+
         public int IdHistorialToken { get; set; }
         public int IdUsuario { get; set; }
         public string Token { get; set; }
@@ -30,5 +30,5 @@ namespace UNAC.AppSalud.Domain.DTOs
             return historialrefreshtokenDTOs;
         }
     }
-   
+
 }

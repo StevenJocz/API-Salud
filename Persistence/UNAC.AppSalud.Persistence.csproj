@@ -10,9 +10,4 @@
     <ProjectReference Include="..\Infrastructure\UNAC.AppSalud.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Commands\" />
-    <Folder Include="Queries\" />
-  </ItemGroup>
-
 </Project>

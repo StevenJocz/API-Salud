@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using UNAC.AppSalud.Infrastructure.EmailServices;
 using UNAC.AppSalud.Persistence.Commands.LoginCommands;
+using UNAC.AppSalud.Persistence.Commands.DiagnosisFormCommands;
 using UNAC.AppSalud.Persistence.Queries.LoginQueries;
 
 namespace UNAC.AppSalud.API.Application
@@ -23,6 +24,8 @@ namespace UNAC.AppSalud.API.Application
             // Commands Persistance Services
             service.AddTransient<ILoginCommands, LoginCommands>();
 
+            //Add service DiagnosisFor
+            service.AddTransient<IDiagnosisFormCommands, DiagnosisFormCommands>();
 
             // Authentication Services
             var key = configuration.GetValue<string>("JwtSettings:key");

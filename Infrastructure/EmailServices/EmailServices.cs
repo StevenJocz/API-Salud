@@ -11,12 +11,17 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using UNAC.AppSalud.Domain.DTOs.EmailDTOs;
 using UNAC.AppSalud.Domain.DTOs.LoginDTOs;
+using UNAC.AppSalud.Domain.DTOs.Login.LoginDTOs;
+using UNAC.AppSalud.Domain.DTOs.UserDTOs;
+using UNAC.AppSalud.Domain.Entities.UserE;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UNAC.AppSalud.Infrastructure.EmailServices
 {
     public interface IEmailServices
     {
         Task<EmailRespose> EmailRestablecimientoPassword(EmailDTOs request);
+        Task<bool> EmailCreateUser(string correo);
     }
 
     public class EmailServices : IEmailServices
@@ -31,7 +36,7 @@ namespace UNAC.AppSalud.Infrastructure.EmailServices
             _context = new SaludDbContext(connectionString);
         }
 
-        private bool EnviarEmail(int Accion, EmailDTOs request, string nombre, string codigo)
+        private async Task<bool> EnviarEmail(int Accion, EmailDTOs request, string nombre, string codigo)
         {
             try
             {
@@ -88,14 +93,13 @@ namespace UNAC.AppSalud.Infrastructure.EmailServices
 
         public async Task<EmailRespose> EmailRestablecimientoPassword(EmailDTOs request)
         {
-            var Email = _context.LoginEs.FirstOrDefault(x => x.userEmail == request.Para);
-
+            var Email = _context.UserEs.FirstOrDefault(x => x.s_user_email == request.Para);
             if (Email == null)
             {
                 return new EmailRespose
                 {
                     resultado = false,
-                    message = "No existe un usuario asociado al correo " + request.Para,
+                    message = "No se encontró ningún usuario asociado al correo electrónico proporcionado. Por favor, verifica la dirección de correo electrónico ingresada  ",
                     codigo = null
                 };
             }
@@ -103,15 +107,15 @@ namespace UNAC.AppSalud.Infrastructure.EmailServices
             { 
                 int Accion = 1;
                 string codigo = GenerarCodigo(6);
-
-                bool Enviado = EnviarEmail(Accion, request, Email.user_name, codigo);
+                string NombreCompleto = Email.s_user_name + " " + Email.s_user_lastname;
+                bool Enviado = await EnviarEmail(Accion, request, NombreCompleto, codigo);
 
                 if (Enviado) {
 
                     return  new EmailRespose
                     {
                             resultado = true,
-                            message = "El correo electrónico se ha enviado correctamente.",
+                            message = "Se ha enviado un correo electrónico correctamente.",
                             codigo = codigo
                     };
                 }
@@ -128,6 +132,30 @@ namespace UNAC.AppSalud.Infrastructure.EmailServices
             }
         }
 
-       
+        public async Task<bool> EmailCreateUser(string correo)
+        {
+
+            var request = new EmailDTOs
+            {
+                Para = correo,
+                Asunto = "Bienvenidos a la App de Salud",
+                Contenido = @"<!DOCTYPE html><html><head><meta charset=""UTF-8""><title>Bienvenidos a la App de Salud</title><style>body {font-family: Arial, sans-serif;background-color: #f4f4f4;color: #333;}.container {max-width: 600px;margin: 0 auto;padding: 20px;}h1 {color: #555;}p {margin-bottom: 10px;}.footer {margin-top: 30px;font-size: 14px;color: #777;}</style></head><body><div class=""container""><h1>Bienvenido a nuestra app de Salud</h1><p>Hola [Nombre],</p><p>¡Gracias por registrarte en nuestra plataforma! Estamos emocionados de tenerte como parte de nuestra comunidad.</p><p>Estaremos encantados de ayudarte en lo que necesites. No dudes en contactarnos si tienes alguna pregunta o consulta.</p><p>¡Disfruta de todos los beneficios de nuestra plataforma y esperamos que tengas una experiencia increíble!</p><p class=""footer"">Atentamente,<br>El equipo de ejemplo</p></div></body></html>"
+            };
+
+            var Email = _context.UserEs.FirstOrDefault(x => x.s_user_email == correo);
+            string NombreCompleto = Email.s_user_name + " " + Email.s_user_lastname;
+            bool Enviado = await EnviarEmail(2, request, NombreCompleto, "");
+
+            if (Enviado)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
     }
 }

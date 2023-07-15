@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 
 namespace UNAC.AppSalud.Domain.Entities.LoginE
 {
-    [Table("historialrefreshtoken")]
+    [Table("tbl_login_historial_token")]
     public class HistorialrefreshtokenE
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int idhistorialtoken { get; set; }
         public int idusuario { get; set; }
-        public string token { get; set; }
-        public DateTime fechacreacion { get; set; }
-        public DateTime fechaexpiracion { get; set; }
+        public string s_token { get; set; }
+        public DateTime ts_fechacreacion { get; set; }
+        public DateTime ts_fechaexpiracion { get; set; }
     }
 }

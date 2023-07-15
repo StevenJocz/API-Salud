@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace UNAC.AppSalud.Domain.Entities.LoginE
 {
-    [Table("login")]
+    [Table("tbl_login")]
     public class LoginE
     {
         [Key]
         public int IdLogin { get; set; }
-        public string userEmail { get; set; }
-        public string userPassword { get; set; }
-        public string user_name { get; set; }
+        public string s_userEmail { get; set; }
+        public string s_userPassword { get; set; }
+        public int fk_tblusers { get; set; }
 
     }
 }

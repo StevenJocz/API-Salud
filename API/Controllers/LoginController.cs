@@ -51,33 +51,6 @@ namespace UNAC.AppSalud.API.Controllers
             }
         }
 
-        [HttpPost("ObtenerToken")]
-        public async Task<IActionResult> ObtenerToken([FromBody] HistorialrefreshtokenDTOs refreshtoken)
-        {
-            try
-            {
-                _logger.LogInformation("Iniciando ObtenerToken.Controller");
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var tokenExpiradoSupuestamente = tokenHandler.ReadJwtToken(refreshtoken.Token);
-
-                if (tokenExpiradoSupuestamente.ValidTo > DateTime.UtcNow)
-                    return BadRequest(new AutorizacionResponse { Resultado = false, Msg = "Token no ha expirado" });
-
-                string idUsuario = tokenExpiradoSupuestamente.Payload["userId"].ToString();
-
-                var autorizacionResponse = await _autorizacionService.DevolverRefreshToken(refreshtoken, int.Parse(idUsuario));
-
-                if (autorizacionResponse.Resultado)
-                    return Ok(autorizacionResponse);
-                else return BadRequest(autorizacionResponse);
-            }
-            catch (Exception)
-            {
-                _logger.LogError("Error al iniciar ObtenerToken.Controller");
-                throw;
-            }
-        }
-
         [HttpPost("EmailRestablecimientoPassword")]
         public async Task<IActionResult> EmailRestablecimientoPassword(EmailDTOs request)
         {
@@ -99,7 +72,7 @@ namespace UNAC.AppSalud.API.Controllers
                     }
                     else
                     {
-                        return Ok(new
+                        return BadRequest(new
                         {
                             resultado = false,
                             message = "Tenemos problemas al enviar el correo electrónico. Por favor intentalo más tarde.",
@@ -142,12 +115,12 @@ namespace UNAC.AppSalud.API.Controllers
                     return Ok(new
                     {
                         resultado = true,
-                        message = "Código correcto, puede continuar",
+                        message = "El código ingresado es correcto. Puede continuar con el proceso.",
                     });
                 }
                 else
                 {
-                    return Ok(new
+                    return BadRequest(new
                     {
                         resultado = false,
                         message = "Código incorrecto. Por favor verifica el código y vuelve a intentarlo.",
@@ -162,7 +135,7 @@ namespace UNAC.AppSalud.API.Controllers
             }
         }
 
-        [HttpPost("ActualizarPassword")]
+        [HttpPut("ActualizarPassword")]
         public async Task<IActionResult> ActualizarPassword(string userEmail, string nuevoPassword)
         {
             try
@@ -173,12 +146,12 @@ namespace UNAC.AppSalud.API.Controllers
                     return Ok(new
                     {
                         resultado = true,
-                        message = "¡Contraseña cambiada exitosamente! Inicia sesión nuevamente con tu nueva contraseña.",
+                        message = "¡Cambio de contraseña exitoso! Por favor, inicia sesión nuevamente utilizando tu nueva contraseña.",
                     });
                 }
                 else
                 {
-                    return Ok(new
+                    return BadRequest(new
                     {
                         resultado = false,
                         message = "No se pudo cambiar la contraseña. Por favor, inténtalo nuevamente.",

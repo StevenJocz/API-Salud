@@ -23,9 +23,9 @@ namespace UNAC.AppSalud.Domain.DTOs.LoginDTOs.LoginDTOs
             {
                 IdHistorialToken = historialrefreshtoken.idhistorialtoken,
                 IdUsuario = historialrefreshtoken.idusuario,
-                Token = historialrefreshtoken.token,
-                FechaCreacion = historialrefreshtoken.fechacreacion,
-                FechaExpiracion = historialrefreshtoken.fechaexpiracion,
+                Token = historialrefreshtoken.s_token,
+                FechaCreacion = historialrefreshtoken.ts_fechacreacion,
+                FechaExpiracion = historialrefreshtoken.ts_fechaexpiracion,
             };
             return historialrefreshtokenDTOs;
         }

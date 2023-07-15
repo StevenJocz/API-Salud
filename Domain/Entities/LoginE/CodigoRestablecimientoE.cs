@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace UNAC.AppSalud.Domain.Entities.LoginE
 {
-    [Table("tbl_codigo_restablecimiento")]
+    [Table("tbl_login_codigo_restablecimiento")]
     public class CodigoRestablecimientoE
     {
         [Key]

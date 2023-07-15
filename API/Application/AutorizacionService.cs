@@ -12,13 +12,13 @@ using UNAC.AppSalud.Domain.DTOs.LoginDTOs.LoginDTOs;
 using UNAC.AppSalud.Domain.Entities;
 using UNAC.AppSalud.Domain.Entities.LoginE;
 using UNAC.AppSalud.Infrastructure;
+using UNAC.AppSalud.Persistence.Queries.LoginQueries;
 
 namespace UNAC.AppSalud.API.Application
 {
     public interface IAutorizacionService
     {
         Task<AutorizacionResponse> DevolverToken(LoginDTOs autorizacion);
-        Task<AutorizacionResponse> DevolverRefreshToken(HistorialrefreshtokenDTOs refreshtoken, int IdUsuario);
     }
 
     public class AutorizacionService : IAutorizacionService
@@ -26,16 +26,18 @@ namespace UNAC.AppSalud.API.Application
         private readonly SaludDbContext _context = null;
         private readonly ILogger<AutorizacionService> _logger;
         private readonly IConfiguration _configuration;
+        private readonly ILoginQueries _loginQueries;
 
-        public AutorizacionService(ILogger<AutorizacionService> logger, IConfiguration configuration)
+        public AutorizacionService(ILogger<AutorizacionService> logger, IConfiguration configuration, ILoginQueries loginQueries)
         {
             _logger = logger;
             _configuration = configuration;
             string? connectionString = _configuration.GetConnectionString("Connection_Salud");
             _context = new SaludDbContext(connectionString);
+            _loginQueries = loginQueries;
         }
 
-        private string GenerarToken(string IdUsuario)
+        private async Task<string> GenerarToken(string IdUsuario)
         {
             try
             {
@@ -43,14 +45,12 @@ namespace UNAC.AppSalud.API.Application
                 var key = _configuration.GetValue<string>("JwtSettings:key");
                 var keyBytes = Encoding.ASCII.GetBytes(key);
 
-                var usuario = _context.LoginEs.FirstOrDefault(x =>
-                    x.IdLogin == int.Parse(IdUsuario)
-                );
-
+                var usuario = await _loginQueries.ConsultarUsuarioXId(int.Parse(IdUsuario));
+               
                 var claims = new ClaimsIdentity();
                 claims.AddClaim(new Claim("userId", IdUsuario));
-                claims.AddClaim(new Claim("userName", usuario.user_name));
-                claims.AddClaim(new Claim("userEmail", usuario.userEmail));
+                claims.AddClaim(new Claim("userName", "Hamilton"));
+                claims.AddClaim(new Claim("userEmail", usuario.s_userEmail));
 
                 var credencialesToken = new SigningCredentials
                 (
@@ -89,9 +89,9 @@ namespace UNAC.AppSalud.API.Application
                 {
                     idhistorialtoken = 0,
                     idusuario = IdUsuario,
-                    token = Token,
-                    fechacreacion = DateTime.UtcNow,
-                    fechaexpiracion = DateTime.UtcNow.AddMinutes(2)
+                    s_token = Token,
+                    ts_fechacreacion = DateTime.UtcNow,
+                    ts_fechaexpiracion = DateTime.UtcNow.AddMinutes(2)
                 };
 
                 await _context.HistorialrefreshtokenEs.AddAsync(historialRefreshToken);
@@ -112,28 +112,32 @@ namespace UNAC.AppSalud.API.Application
         }
 
 
-        public async  Task<AutorizacionResponse> DevolverToken(LoginDTOs autorizacion) 
+        public async Task<AutorizacionResponse> DevolverToken(LoginDTOs autorizacion)
         {
             try
             {
                 _logger.LogInformation("Iniciando DevolverToken");
-                var usuario_Encontrado = _context.LoginEs.FirstOrDefault(x =>
-                x.userEmail == autorizacion.userEmail &&
-                x.userPassword == autorizacion.userPassword
-            );
+
+                var usuario_Encontrado = await _loginQueries.ConsultarUsuarioXCorreo(autorizacion.userEmail, autorizacion.userPassword);
 
                 if (usuario_Encontrado == null)
                 {
                     return new AutorizacionResponse()
                     {
                         Resultado = false,
-                        Msg = "Correo electrónico o contraseña inválidos. Por favor, verifica la información ingresada."
+                        Msg = "Las credenciales de correo electrónico o contraseña proporcionadas son inválidas. Por favor, verifica la información ingresada e intenta nuevamente."
                     };
                 }
 
-                string tokenCreado = GenerarToken(usuario_Encontrado.IdLogin.ToString());
+                string tokenCreado = await GenerarToken(usuario_Encontrado.IdLogin.ToString());
+                await GuardarHistorialRefreshToken(int.Parse(usuario_Encontrado.IdLogin.ToString()), tokenCreado);
 
-                return await GuardarHistorialRefreshToken(usuario_Encontrado.IdLogin, tokenCreado);
+                return new AutorizacionResponse()
+                {
+                    Token = tokenCreado,
+                    Resultado = true,
+                    Msg = "Ok"
+                };
             }
             catch (Exception)
             {
@@ -142,26 +146,5 @@ namespace UNAC.AppSalud.API.Application
             }
         }
 
-        public async Task<AutorizacionResponse> DevolverRefreshToken(HistorialrefreshtokenDTOs refreshtoken, int IdUsuario)
-        {
-            try
-            {
-                _logger.LogInformation("Iniciando DevolverRefreshToken");
-                var refreshTokenEncontrado = _context.HistorialrefreshtokenEs.FirstOrDefault(x =>
-                    x.token == refreshtoken.Token &&
-                    x.idusuario == IdUsuario);
-
-                if (refreshTokenEncontrado == null)
-                    return new AutorizacionResponse { Resultado = false, Msg = "No existe Token" };
-
-                var tokenCreado = GenerarToken(IdUsuario.ToString());
-                return await GuardarHistorialRefreshToken(IdUsuario, tokenCreado);
-            }
-            catch (Exception)
-            {
-                _logger.LogError("Error al iniciar DevolverRefreshToken");
-                throw;
-            }
-        }
     }
 }

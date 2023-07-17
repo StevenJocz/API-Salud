@@ -61,7 +61,7 @@ namespace UNAC.AppSalud.API.Controllers
                     return Ok(new
                     {
                         resultado = true,
-                        message = "Usuario creado correctamente",
+                        message = "¡Has completado el registro satisfactoriamente! Para continuar, inicia sesión.",
                     }
                     );
                 }

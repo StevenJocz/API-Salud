@@ -1,4 +1,4 @@
-﻿namespace UNAC.AppSalud.Domain.Entities.User
+namespace UNAC.AppSalud.Domain.Entities.User
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
@@ -14,7 +14,7 @@
         public DateTime dt_user_birthdate { get; set; }
         public string s_user_gender { get; set; }
         public int fk_user_address_city { get; set; }
-        public string? s_user_cellphone { get; set; }
+        public string s_user_cellphone { get; set; }
         public string s_user_email { get; set; }
 
     }

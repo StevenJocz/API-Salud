@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UNAC.AppSalud.Domain.DTOs.Login.LoginDTOs;
+using UNAC.AppSalud.Domain.DTOs.UserDTOs;
 using UNAC.AppSalud.Domain.Entities.LoginE;
 using UNAC.AppSalud.Infrastructure;
 
@@ -16,6 +18,7 @@ namespace UNAC.AppSalud.Persistence.Commands.LoginCommands
         Task<bool> InsertarCodigo(CodigoRestablecimientoE nuevoCodigo);
         Task<bool> EliminarCodigo(string correo);
         Task<bool> ActualizarPassword(string userEmail, string nuevoPassword);
+        Task<bool> InsertarLogin(LoginDTOs LoginDTOs);
     }
 
     public class LoginCommands : ILoginCommands, IDisposable
@@ -63,7 +66,7 @@ namespace UNAC.AppSalud.Persistence.Commands.LoginCommands
             }
             catch (Exception)
             {
-
+                _logger.LogError("Error en el metodo LoginCommands.InsertarCodigo...");
                 throw;
             }
         }
@@ -87,6 +90,7 @@ namespace UNAC.AppSalud.Persistence.Commands.LoginCommands
             }
             catch (Exception)
             {
+                _logger.LogError("Error en el LoginCommands.EliminarCodigo...");
                 throw;
             }
         }
@@ -96,10 +100,10 @@ namespace UNAC.AppSalud.Persistence.Commands.LoginCommands
             _logger.LogTrace("Iniciando metodo LoginCommands.ActualizarCodigo...");
             try
             {
-                var codigo = await _context.LoginEs.FirstOrDefaultAsync(c => c.userEmail == userEmail);
+                var codigo = await _context.LoginEs.FirstOrDefaultAsync(c => c.s_userEmail == userEmail);
                 if (codigo != null)
                 {
-                    codigo.userPassword = nuevoPassword; 
+                    codigo.s_userPassword = nuevoPassword; 
                     await _context.SaveChangesAsync();
                     return true;
                 }
@@ -110,6 +114,25 @@ namespace UNAC.AppSalud.Persistence.Commands.LoginCommands
             }
             catch (Exception)
             {
+                _logger.LogError("Error en el LoginCommands.ActualizarCodigo...");
+                throw;
+            }
+        }
+
+
+        public async Task<bool> InsertarLogin(LoginDTOs LoginDTOs)
+        {
+            _logger.LogTrace("Iniciando metodo LoginCommands.InsertarLogin...");
+            try
+            {
+                var LoginE = LoginDTOs.CreateE(LoginDTOs);
+                await _context.LoginEs.AddAsync(LoginE);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                _logger.LogError("Error en el metodo LoginCommands.InsertarLogin...");
                 throw;
             }
         }

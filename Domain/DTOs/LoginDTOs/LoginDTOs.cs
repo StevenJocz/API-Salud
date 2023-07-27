@@ -9,19 +9,33 @@ namespace UNAC.AppSalud.Domain.DTOs.Login.LoginDTOs
 {
     public class LoginDTOs
     {
+        public int IdLogin { get; set; }
         public string userEmail { get; set; }
         public string userPassword { get; set; }
-        public string user_name { get; set; }
+        public int fk_tblusers { get; set; }
 
         public static LoginDTOs CreateDTO(LoginE LoginE)
         {
             LoginDTOs LoginDTOs = new()
             {
-                userEmail = LoginE.userEmail,
-                userPassword = LoginE.userPassword,
-                user_name = LoginE.user_name,
+                IdLogin = LoginE.IdLogin,
+                userEmail = LoginE.s_userEmail,
+                userPassword = LoginE.s_userPassword,
+                fk_tblusers = LoginE.fk_tblusers,
             };
             return LoginDTOs;
+        }
+
+        public static LoginE CreateE(LoginDTOs LoginDTOs)
+        {
+            LoginE LoginE = new()
+            {
+                IdLogin = LoginDTOs.IdLogin,
+                s_userEmail = LoginDTOs.userEmail,
+                s_userPassword = LoginDTOs.userPassword,
+                fk_tblusers = LoginDTOs.fk_tblusers,
+            };
+            return LoginE;
         }
     }
 }

@@ -1,4 +1,4 @@
-namespace UNAC.AppSalud.Domain.Entities.User
+namespace UNAC.AppSalud.Domain.Entities.UserE
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;

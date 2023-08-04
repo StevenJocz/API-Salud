@@ -6,6 +6,15 @@ using UNAC.AppSalud.Persistence.Commands.LoginCommands;
 using UNAC.AppSalud.Persistence.Commands.DiagnosisFormCommands;
 using UNAC.AppSalud.Persistence.Commands.UserCommands;
 using UNAC.AppSalud.Persistence.Queries.LoginQueries;
+using UNAC.AppSalud.Persistence.Commands.AnswersBankCommands;
+using UNAC.AppSalud.Persistence.Queries.AnswersBankQueries;
+using UNAC.AppSalud.Persistence.Commands.IllnessesCommands;
+using UNAC.AppSalud.Persistence.Queries.IllnessesQueries;
+using UNAC.AppSalud.Persistence.Commands.MedicineCommands;
+using UNAC.AppSalud.Persistence.Queries.MedicineQueries;
+using UNAC.AppSalud.Persistence.Commands.QuestionsBankCommands;
+using UNAC.AppSalud.Persistence.Queries.QuestionsBankQueries;
+using UNAC.AppSalud.Persistence.Commands.MedicineFormCommands;
 
 namespace UNAC.AppSalud.API.Application
 {
@@ -30,6 +39,27 @@ namespace UNAC.AppSalud.API.Application
 
             //Add service DiagnosisFor
             service.AddTransient<IDiagnosisFormCommands, DiagnosisFormCommands>();
+
+            service.AddTransient<IAnswersBankCommands, AnswersBankCommands>();
+
+            service.AddTransient<IAnswersBankQueries, AnswersBankQueries>();
+
+            service.AddTransient<IIllnessesComands, IllnessessCommands>();
+
+            service.AddTransient<IIllnessesQueries, IllnessesQueries>();
+
+            service.AddTransient<IMedicineCommands, MedicineCommands>();
+
+            service.AddTransient<IMedicineQueries, MedicineQueries>();
+
+            service.AddTransient<IQuestionBankCommands, QuestionsBankCommands>();
+
+            service.AddTransient<IQuestionBankQueries, QuestionsBankQueries>();
+
+            service.AddTransient<IMedicineFormCommands, MedicineFormCommands>();
+
+            service.AddTransient<IDiagnosisFormCommands, DiagnosisFormCommands>();
+
 
             // Authentication Services
             var key = configuration.GetValue<string>("JwtSettings:key");

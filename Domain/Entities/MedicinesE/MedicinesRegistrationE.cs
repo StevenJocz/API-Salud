@@ -1,11 +1,11 @@
-﻿namespace UNAC.AppSalud.Domain.Entities.MedicinesE
+﻿namespace UNAC.AppSalud.Domain.Entities.MedicinesRegistrationE
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Globalization;
 
     [Table("ti_medicines_registration")]
-    public class MedicinesRegistration
+    public class MedicinesRegistrationE
     {
         [Key]
         public int id { get; set; }

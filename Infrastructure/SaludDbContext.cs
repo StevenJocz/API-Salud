@@ -1,7 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using UNAC.AppSalud.Domain.Entities.AnswersBankE;
 using UNAC.AppSalud.Domain.Entities.DiagnosisFormAnswersE;
 using UNAC.AppSalud.Domain.Entities.DiagnosticFormE;
+using UNAC.AppSalud.Domain.Entities.IllnessesE;
 using UNAC.AppSalud.Domain.Entities.LoginE;
+using UNAC.AppSalud.Domain.Entities.MedicinesE;
+using UNAC.AppSalud.Domain.Entities.MedicinesRegistrationE;
+using UNAC.AppSalud.Domain.Entities.QuestionsBankE;
 using UNAC.AppSalud.Domain.Entities.UserE;
 
 namespace UNAC.AppSalud.Infrastructure
@@ -31,6 +36,11 @@ namespace UNAC.AppSalud.Infrastructure
         public virtual DbSet<CodigoRestablecimientoE> CodigoRestablecimientoEs { get; set; }
         public virtual DbSet<DiagnosisFormAnswersE> DiagnosisFormAnswersE { get; set; }
         public virtual DbSet<DiagnosisFormE> DiagnosisFormE { get; set; }
-        public virtual DbSet<UserE> UserE { get; set; }
+        public virtual DbSet<MedicinesRegistrationE> MedicinesRegistrationE { get; set; }
+        public virtual DbSet<UserE> UserEs { get; set; }
+        public virtual DbSet<MedicinesE> MedicinesE { get; set; }
+        public virtual DbSet<IllnessesE> IllnessesEs { get; set; }
+        public virtual DbSet<QuestionsBankE> QuestionsBankE { get; set; }
+        public virtual DbSet<AnswersBankE> AnswersBankE { get; set; }
     }
 }

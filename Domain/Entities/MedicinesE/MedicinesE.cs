@@ -2,6 +2,7 @@
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using UNAC.AppSalud.Domain.Entities.IllnessesE;
 
     [Table("tbl_medicines")]
     public class MedicinesE

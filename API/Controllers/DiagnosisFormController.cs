@@ -1,13 +1,12 @@
-﻿namespace UNAC.AppSalud.API.Controllers
+﻿using Microsoft.AspNetCore.Mvc;
+using UNAC.AppSalud.Domain.DTOs.CommonDTOs;
+using UNAC.AppSalud.Domain.DTOs.DiagnosisFormDTOs;
+using UNAC.AppSalud.Persistence.Commands.DiagnosisFormCommands;
+using UNAC.AppSalud.Persistence.Commands.LoginCommands;
+using UNAC.AppSalud.Persistence.Queries.LoginQueries;
+
+namespace UNAC.AppSalud.API.Controllers
 {
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
-    using Org.BouncyCastle.Asn1.Ocsp;
-    using UNAC.AppSalud.Domain.DTOs.CommonDTOs;
-    using UNAC.AppSalud.Domain.DTOs.DiagnosisFormDTOs;
-    using UNAC.AppSalud.Persistence.Commands.DiagnosisFormCommands;
-    using UNAC.AppSalud.Persistence.Commands.LoginCommands;
-    using UNAC.AppSalud.Persistence.Queries.LoginQueries;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -32,7 +31,7 @@
             try
             {
                 _logger.LogInformation("Start SaveAnswersDiagnosisForm.Controller");
-                AnswersErrorDTOs SaveAnswersDiagnosisForm = await _diagnosisFormServiceService.SaveAnswersDiagnosisForm(DiagnosisForm);
+                AnswersErrorDTOs SaveAnswersDiagnosisForm = await _diagnosisFormServiceService.SaveAnswersDiagnosisFormAsync(DiagnosisForm);
                 return Ok(new
                 {
                     resultado = SaveAnswersDiagnosisForm.stateError,

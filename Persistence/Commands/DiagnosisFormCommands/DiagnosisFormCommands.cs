@@ -1,19 +1,18 @@
-﻿namespace UNAC.AppSalud.Persistence.Commands.DiagnosisFormCommands
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System.Data;
+using UNAC.AppSalud.Domain.DTOs.CommonDTOs;
+using UNAC.AppSalud.Domain.DTOs.DiagnosisFormDTOs;
+using UNAC.AppSalud.Domain.Entities.DiagnosisFormAnswersE;
+using UNAC.AppSalud.Domain.Entities.DiagnosticFormE;
+using UNAC.AppSalud.Infrastructure;
+
+namespace UNAC.AppSalud.Persistence.Commands.DiagnosisFormCommands
 {
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
-    using System.Data;
-    using UNAC.AppSalud.Domain.DTOs.CommonDTOs;
-    using UNAC.AppSalud.Domain.DTOs.DiagnosisFormDTOs;
-    using UNAC.AppSalud.Domain.DTOs.LoginDTOs.LoginDTOs;
-    using UNAC.AppSalud.Domain.Entities.DiagnosisFormAnswersE;
-    using UNAC.AppSalud.Domain.Entities.DiagnosticFormE;
-    using UNAC.AppSalud.Domain.Entities.LoginE;
-    using UNAC.AppSalud.Infrastructure;
-    using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
     public interface IDiagnosisFormCommands {
-        Task<AnswersErrorDTOs> SaveAnswersDiagnosisForm(DiagnosisFormDTOs Diagnosis_form);
+        Task<AnswersErrorDTOs> SaveAnswersDiagnosisFormAsync(DiagnosisFormDTOs Diagnosis_form);
     }
 
     public class DiagnosisFormCommands : IDiagnosisFormCommands
@@ -57,16 +56,15 @@
             }
         }
 
-        public async Task<AnswersErrorDTOs> SaveAnswersDiagnosisForm(DiagnosisFormDTOs DiagnosisForm)
+        public async Task<AnswersErrorDTOs> SaveAnswersDiagnosisFormAsync(DiagnosisFormDTOs DiagnosisForm)
         {
+            _logger.LogInformation("Start DiagnosisFormCommands.SaveAnswersDiagnosisForm");
             List<AnswersErrorDTOs> DetailAnswerConsult = new List<AnswersErrorDTOs>();
             bool StateInformation = true;
             string DescriptionStateInformation = "";
             try
             {
-                _logger.LogInformation("Start SaveAnswersDiagnosisForm");
-
-                var UserId = _context.UserE.Where(x => x.s_user_email == DiagnosisForm.user_email).Select(x => new { x.id }).FirstOrDefault() ;
+                var UserId =await _context.UserEs.Where(x => x.s_user_email == DiagnosisForm.user_email).Select(x => new { x.id }).FirstOrDefaultAsync() ;
 
                 if (UserId != null && DiagnosisForm.Answers != null)
                 {
@@ -87,18 +85,18 @@
                             await _context.SaveChangesAsync();
                         }
 
-                        DescriptionStateInformation = "All changes are saved.";
+                        DescriptionStateInformation = "Todos los cambios han sido guardados.";
                     }
                     else
                     {
                         StateInformation = false;
-                        DescriptionStateInformation = "The diagnosis form is not saved.";
+                        DescriptionStateInformation = "El formulario de diagnostico no ha sido guardado.";
                     }
                 }
                 else
                 {
                     StateInformation = false;
-                    DescriptionStateInformation = "The user haven't been to find.";
+                    DescriptionStateInformation = "El usuario no ha sido encontrado.";
                 }
 
             }
@@ -106,7 +104,7 @@
             {
                 _logger.LogError("Error to start SaveAnswersDiagnosisForm");
                 StateInformation = false;
-                DescriptionStateInformation = "Error to start SaveAnswersDiagnosisForm.";
+                DescriptionStateInformation = "Error al iniciar SaveAnswersDiagnosisForm.";
             }
 
             AnswersErrorDTOs ReponseConsult = new AnswersErrorDTOs
@@ -117,6 +115,7 @@
 
             return ReponseConsult;
         }
+        
  
     }
 }

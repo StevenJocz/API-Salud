@@ -1,4 +1,4 @@
-﻿namespace UNAC.AppSalud.Domain.Entities.MedicinesE
+﻿namespace UNAC.AppSalud.Domain.Entities.IllnessesE
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;

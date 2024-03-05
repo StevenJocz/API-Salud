@@ -13,6 +13,7 @@ using UNAC.AppSalud.Domain.Entities;
 using UNAC.AppSalud.Domain.Entities.LoginE;
 using UNAC.AppSalud.Infrastructure;
 using UNAC.AppSalud.Persistence.Queries.LoginQueries;
+using UNAC.AppSalud.Persistence.Utilidades;
 
 namespace UNAC.AppSalud.API.Application
 {
@@ -27,14 +28,16 @@ namespace UNAC.AppSalud.API.Application
         private readonly ILogger<AutorizacionService> _logger;
         private readonly IConfiguration _configuration;
         private readonly ILoginQueries _loginQueries;
+        private readonly IUtilidades _utilidades;
 
-        public AutorizacionService(ILogger<AutorizacionService> logger, IConfiguration configuration, ILoginQueries loginQueries)
+        public AutorizacionService(ILogger<AutorizacionService> logger, IConfiguration configuration, ILoginQueries loginQueries, IUtilidades utilidades)
         {
             _logger = logger;
             _configuration = configuration;
             string? connectionString = _configuration.GetConnectionString("Connection_Salud");
             _context = new SaludDbContext(connectionString);
             _loginQueries = loginQueries;
+            _utilidades = utilidades;
         }
 
         private async Task<string> GenerarToken(string IdUsuario)
@@ -49,8 +52,8 @@ namespace UNAC.AppSalud.API.Application
                
                 var claims = new ClaimsIdentity();
                 claims.AddClaim(new Claim("userId", IdUsuario));
-                claims.AddClaim(new Claim("userName", "Hamilton"));
-                claims.AddClaim(new Claim("userEmail", usuario.s_userEmail));
+                claims.AddClaim(new Claim("userName", usuario.s_user_name + " " + usuario.s_user_lastname));
+                claims.AddClaim(new Claim("userEmail", usuario.s_user_email));
 
                 var credencialesToken = new SigningCredentials
                 (
@@ -118,7 +121,8 @@ namespace UNAC.AppSalud.API.Application
             {
                 _logger.LogInformation("Iniciando DevolverToken");
 
-                var usuario_Encontrado = await _loginQueries.ConsultarUsuarioXCorreo(autorizacion.userEmail, autorizacion.userPassword);
+                var hashedPassword = await _utilidades.HashPassword(autorizacion.userPassword);
+                var usuario_Encontrado = await _loginQueries.ConsultarUsuarioXCorreo(autorizacion.userEmail, hashedPassword);
 
                 if (usuario_Encontrado == null)
                 {

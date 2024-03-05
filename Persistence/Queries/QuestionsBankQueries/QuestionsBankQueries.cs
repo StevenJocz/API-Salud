@@ -10,7 +10,7 @@ namespace UNAC.AppSalud.Persistence.Queries.QuestionsBankQueries
     {
         Task<List<QuestionsBankDTOs>> ShowQuestionsBankAsync();
     }
-    public class QuestionsBankQueries : IQuestionBankQueries 
+    public class QuestionsBankQueries : IQuestionBankQueries, IDisposable
     {
         private readonly SaludDbContext _context = null;
         private readonly ILogger<QuestionsBankQueries> _logger;
@@ -23,6 +23,29 @@ namespace UNAC.AppSalud.Persistence.Queries.QuestionsBankQueries
             string? connectionString = _configuration.GetConnectionString("Connection_Salud");
             _context = new SaludDbContext(connectionString);
         }
+
+        #region implementacion Disponse
+        bool disposed = false;
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    _context.Dispose();
+                }
+                disposed = true;
+            }
+        }
+
+        #endregion
 
         public async Task<List<QuestionsBankDTOs>> ShowQuestionsBankAsync()
         {

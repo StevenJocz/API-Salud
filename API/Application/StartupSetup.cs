@@ -15,6 +15,8 @@ using UNAC.AppSalud.Persistence.Queries.MedicineQueries;
 using UNAC.AppSalud.Persistence.Commands.QuestionsBankCommands;
 using UNAC.AppSalud.Persistence.Queries.QuestionsBankQueries;
 using UNAC.AppSalud.Persistence.Commands.MedicineFormCommands;
+using UNAC.AppSalud.Persistence.Utilidades;
+using UNAC.AppSalud.Persistence.Queries.LocationQueries;
 
 namespace UNAC.AppSalud.API.Application
 {
@@ -30,35 +32,27 @@ namespace UNAC.AppSalud.API.Application
 
             // Queries Persistance Services
             service.AddTransient<ILoginQueries, LoginQueries>();
+            service.AddTransient<IAnswersBankQueries, AnswersBankQueries>();
+            service.AddTransient<IIllnessesQueries, IllnessesQueries>();
+            service.AddTransient<IMedicineCommands, MedicineCommands>();
+            service.AddTransient<IMedicineQueries, MedicineQueries>();
+            service.AddTransient<IQuestionBankQueries, QuestionsBankQueries>();
+            service.AddTransient<ILocationQueries, LocationQueries>();
 
             // Commands Persistance Services
             service.AddTransient<ILoginCommands, LoginCommands>();
+            service.AddTransient<IMedicineFormCommands, MedicineFormCommands>();
+            service.AddTransient<IDiagnosisFormCommands, DiagnosisFormCommands>();
+            service.AddTransient<IAnswersBankCommands, AnswersBankCommands>();
+            service.AddTransient<IDiagnosisFormCommands, DiagnosisFormCommands>();
+            service.AddTransient<IIllnessesComands, IllnessessCommands>();
+            service.AddTransient<IQuestionBankCommands, QuestionsBankCommands>();
 
             //Command user
             service.AddTransient<IUserCommands, UserCommands>();
 
-            //Add service DiagnosisFor
-            service.AddTransient<IDiagnosisFormCommands, DiagnosisFormCommands>();
-
-            service.AddTransient<IAnswersBankCommands, AnswersBankCommands>();
-
-            service.AddTransient<IAnswersBankQueries, AnswersBankQueries>();
-
-            service.AddTransient<IIllnessesComands, IllnessessCommands>();
-
-            service.AddTransient<IIllnessesQueries, IllnessesQueries>();
-
-            service.AddTransient<IMedicineCommands, MedicineCommands>();
-
-            service.AddTransient<IMedicineQueries, MedicineQueries>();
-
-            service.AddTransient<IQuestionBankCommands, QuestionsBankCommands>();
-
-            service.AddTransient<IQuestionBankQueries, QuestionsBankQueries>();
-
-            service.AddTransient<IMedicineFormCommands, MedicineFormCommands>();
-
-            service.AddTransient<IDiagnosisFormCommands, DiagnosisFormCommands>();
+            // Utilidades Persistance Service IUtilidades
+            service.AddScoped<IUtilidades, Utilidades>();
 
 
             // Authentication Services

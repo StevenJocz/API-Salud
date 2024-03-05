@@ -8,6 +8,7 @@
     public class AnswersBankE
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
         public string s_answer_description { get; set; }
         public int i_answer_value { get; set; }

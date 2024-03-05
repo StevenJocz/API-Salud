@@ -11,6 +11,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using UNAC.AppSalud.Domain.Entities.LoginE;
+using UNAC.AppSalud.Domain.Entities.UserE;
 using UNAC.AppSalud.Infrastructure;
 using UNAC.AppSalud.Persistence.Commands.LoginCommands;
 
@@ -19,7 +20,7 @@ namespace UNAC.AppSalud.Persistence.Queries.LoginQueries
     public interface ILoginQueries
     {
         Task<bool> ConsultarCodigo(CodigoRestablecimientoE nuevoCodigo);
-        Task<LoginE> ConsultarUsuarioXId(int idUsuario);
+        Task<UserE> ConsultarUsuarioXId(int idUsuario);
         Task<LoginE> ConsultarUsuarioXCorreo(string userEmail, string userPassword);
     }
 
@@ -37,6 +38,7 @@ namespace UNAC.AppSalud.Persistence.Queries.LoginQueries
             _context = new SaludDbContext(connectionString);
         }
 
+        #region implementacion Disponse
         bool disposed = false;
 
         public void Dispose()
@@ -47,7 +49,7 @@ namespace UNAC.AppSalud.Persistence.Queries.LoginQueries
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposing)
+            if (!disposed)
             {
                 if (disposing)
                 {
@@ -57,14 +59,17 @@ namespace UNAC.AppSalud.Persistence.Queries.LoginQueries
             }
         }
 
-        public async Task<LoginE> ConsultarUsuarioXId(int idUsuario)
+        #endregion
+
+        public async Task<UserE> ConsultarUsuarioXId(int idUsuario)
         {
             _logger.LogTrace("Iniciando metodo LoginQueries.ConsultarUsuario...");
             try
             {
                 var usuario = await _context.LoginEs.AsNoTracking().FirstOrDefaultAsync(x => x.IdLogin == idUsuario);
+                var datosUsuario = await _context.UserEs.AsNoTracking().FirstOrDefaultAsync(x => x.id == usuario.fk_tblusers);
 
-                return usuario;
+                return datosUsuario;
             }
             catch (Exception)
             {

@@ -7,6 +7,7 @@
     public class IllnessesE
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
         public string s_illness_name { get; set; }
     }

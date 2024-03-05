@@ -8,6 +8,7 @@
     public class MedicinesE
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
         public string s_medicine_name { get; set; }
         public string s_medicine_description { get; set; }

@@ -7,6 +7,7 @@
     public class QuestionsBankE
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
         public string s_question_description { get; set; }
     }

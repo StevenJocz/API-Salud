@@ -8,6 +8,7 @@
     public class MedicinesRegistrationE
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
         public int fk_tblmedicines { get; set; }
         public int fk_tblusers { get; set; }

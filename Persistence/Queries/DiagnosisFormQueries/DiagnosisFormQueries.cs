@@ -17,7 +17,5 @@ namespace UNAC.AppSalud.Persistence.Queries.DiagnosisFormQueries
             string? connectionString = _configuration.GetConnectionString("Connection_Salud");
             _context = new SaludDbContext(connectionString);
         }
-
-
     }
 }

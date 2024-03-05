@@ -12,7 +12,7 @@ namespace UNAC.AppSalud.Persistence.Commands.MedicineFormCommands
     {
         Task<AnswersErrorDTOs> SaveAnswersMedicineFormAsync(MedicineFormDTOs Medicine_fsorm);
     }
-    public class MedicineFormCommands : IMedicineFormCommands
+    public class MedicineFormCommands : IMedicineFormCommands, IDisposable
     {
         private readonly SaludDbContext _context = null;
         private readonly ILogger<MedicineFormCommands> _logger;
@@ -25,6 +25,29 @@ namespace UNAC.AppSalud.Persistence.Commands.MedicineFormCommands
             string? connectionString = _configuration.GetConnectionString("Connection_Salud");
             _context = new SaludDbContext(connectionString);
         }
+
+        #region implementacion Disponse
+        bool disposed = false;
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    _context.Dispose();
+                }
+                disposed = true;
+            }
+        }
+
+        #endregion
 
         private async Task<bool> SaveAnswersMedicineFormXUser(int UserId, MedicineFormDTOs Medicine_form)
         {

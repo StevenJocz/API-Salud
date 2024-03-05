@@ -14,6 +14,7 @@ using UNAC.AppSalud.Domain.Entities.LoginE;
 using UNAC.AppSalud.Domain.Entities.UserE;
 using UNAC.AppSalud.Infrastructure;
 using UNAC.AppSalud.Persistence.Commands.LoginCommands;
+using UNAC.AppSalud.Persistence.Utilidades;
 
 namespace UNAC.AppSalud.Persistence.Commands.UserCommands
 {
@@ -29,17 +30,19 @@ namespace UNAC.AppSalud.Persistence.Commands.UserCommands
         private readonly ILogger<UserCommands> _logger;
         private readonly IConfiguration _configuration;
         private readonly ILoginCommands _loginCommands;
+        private readonly IUtilidades _utilidades;
 
-        public UserCommands(ILogger<UserCommands> logger, IConfiguration configuration, ILoginCommands loginCommands)
+        public UserCommands(ILogger<UserCommands> logger, IConfiguration configuration, ILoginCommands loginCommands, IUtilidades utilidades)
         {
             _logger = logger;
             _configuration = configuration;
             _loginCommands = loginCommands;
             string? connectionString = _configuration.GetConnectionString("Connection_Salud");
             _context = new SaludDbContext(connectionString);
+            _utilidades = utilidades;
         }
 
-
+        #region implementacion Disponse
         bool disposed = false;
 
         public void Dispose()
@@ -50,7 +53,7 @@ namespace UNAC.AppSalud.Persistence.Commands.UserCommands
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposing)
+            if (!disposed)
             {
                 if (disposing)
                 {
@@ -59,6 +62,8 @@ namespace UNAC.AppSalud.Persistence.Commands.UserCommands
                 disposed = true;
             }
         }
+
+        #endregion
 
         public async Task<int> InsertarUser(UserDTOs userDTOs)
         {
@@ -76,10 +81,11 @@ namespace UNAC.AppSalud.Persistence.Commands.UserCommands
 
                     if (userE.id != 0)
                     {
+                        var hashedPassword = await _utilidades.HashPassword(userDTOs.Password.Trim());
                         var nuevoLogin = new LoginDTOs
                         {
-                            userEmail = userDTOs.s_user_email,
-                            userPassword = userDTOs.Password,
+                            userEmail = userDTOs.s_user_email.Trim(),
+                            userPassword = hashedPassword,
                             fk_tblusers = userE.id,
                         };
 

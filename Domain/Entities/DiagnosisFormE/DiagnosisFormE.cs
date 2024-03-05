@@ -9,6 +9,7 @@
     public class DiagnosisFormE {
 
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
         public int i_total_result { get; set; }
         public int i_life_style_indicator { get; set; }

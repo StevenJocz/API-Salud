@@ -10,6 +10,7 @@ using UNAC.AppSalud.Domain.DTOs.Login.LoginDTOs;
 using UNAC.AppSalud.Domain.DTOs.UserDTOs;
 using UNAC.AppSalud.Domain.Entities.LoginE;
 using UNAC.AppSalud.Infrastructure;
+using UNAC.AppSalud.Persistence.Utilidades;
 
 namespace UNAC.AppSalud.Persistence.Commands.LoginCommands
 {
@@ -26,15 +27,18 @@ namespace UNAC.AppSalud.Persistence.Commands.LoginCommands
         private readonly SaludDbContext _context = null;
         private readonly ILogger<LoginCommands> _logger;
         private readonly IConfiguration _configuration;
+        private readonly IUtilidades _utilidades;
 
-        public LoginCommands(ILogger<LoginCommands> logger, IConfiguration configuration)
+        public LoginCommands(ILogger<LoginCommands> logger, IConfiguration configuration, IUtilidades utilidades)
         {
             _logger = logger;
             _configuration = configuration;
             string? connectionString = _configuration.GetConnectionString("Connection_Salud");
             _context = new SaludDbContext(connectionString);
+            _utilidades = utilidades;
         }
 
+        #region implementacion Disponse
         bool disposed = false;
 
         public void Dispose()
@@ -45,7 +49,7 @@ namespace UNAC.AppSalud.Persistence.Commands.LoginCommands
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposing)
+            if (!disposed)
             {
                 if (disposing)
                 {
@@ -54,6 +58,8 @@ namespace UNAC.AppSalud.Persistence.Commands.LoginCommands
                 disposed = true;
             }
         }
+
+        #endregion
 
         public async Task<bool> InsertarCodigo(CodigoRestablecimientoE nuevoCodigo)
         {
@@ -103,7 +109,8 @@ namespace UNAC.AppSalud.Persistence.Commands.LoginCommands
                 var codigo = await _context.LoginEs.FirstOrDefaultAsync(c => c.s_userEmail == userEmail);
                 if (codigo != null)
                 {
-                    codigo.s_userPassword = nuevoPassword; 
+                    var hashedPassword = await _utilidades.HashPassword(nuevoPassword.Trim());
+                    codigo.s_userPassword = hashedPassword; 
                     await _context.SaveChangesAsync();
                     return true;
                 }

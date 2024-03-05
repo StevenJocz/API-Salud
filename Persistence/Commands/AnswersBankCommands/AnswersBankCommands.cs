@@ -14,7 +14,7 @@ namespace UNAC.AppSalud.Persistence.Commands.AnswersBankCommands
         Task<AnswersErrorDTOs> ChangeAnswersBankAsync(AnswersBankDTOs Answers_bank);
         Task<AnswersErrorDTOs> DeleteAnswersBankAsync(int IdAnswer);
     }
-    public class AnswersBankCommands : IAnswersBankCommands
+    public class AnswersBankCommands : IAnswersBankCommands, IDisposable
     {
         private readonly SaludDbContext _context = null;
         private readonly ILogger<AnswersBankCommands> _logger;
@@ -27,6 +27,29 @@ namespace UNAC.AppSalud.Persistence.Commands.AnswersBankCommands
             string? connectionString = _configuration.GetConnectionString("Connection_Salud");
             _context = new SaludDbContext(connectionString);
         }
+
+        #region implementacion Disponse
+        bool disposed = false;
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    _context.Dispose();
+                }
+                disposed = true;
+            }
+        }
+
+        #endregion
 
         private async Task<bool> SaveAnswer(AnswersBankDTOs answer_bank)
         {

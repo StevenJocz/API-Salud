@@ -8,6 +8,7 @@
     public class DiagnosisFormAnswersE
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
         public int fk_tbldiagnosis_form { get; set; }
         public int fk_tblquestion_bank { get; set; }

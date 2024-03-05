@@ -16,7 +16,7 @@ namespace UNAC.AppSalud.Persistence.Commands.MedicineCommands
         Task<AnswersErrorDTOs> ChangeXMedicineAsync(MedicineDTOs Medicine);
         Task<AnswersErrorDTOs> DeleteMedicineAsync(int IdMedicine);
     }
-    public class MedicineCommands : IMedicineCommands
+    public class MedicineCommands : IMedicineCommands, IDisposable
     {
 
         private readonly SaludDbContext _context = null;
@@ -30,6 +30,29 @@ namespace UNAC.AppSalud.Persistence.Commands.MedicineCommands
             string? connectionString = _configuration.GetConnectionString("Connection_Salud");
             _context = new SaludDbContext(connectionString);
         }
+
+        #region implementacion Disponse
+        bool disposed = false;
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    _context.Dispose();
+                }
+                disposed = true;
+            }
+        }
+
+        #endregion
 
         private async Task<bool> SaveMedicine(MedicineDTOs Medicine)
         {

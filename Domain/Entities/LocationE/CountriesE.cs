@@ -6,17 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UNAC.AppSalud.Domain.Entities.LoginE
+namespace UNAC.AppSalud.Domain.Entities.LocationE
 {
-    [Table("tbl_login")]
-    public class LoginE
+    [Table("tbl_countries")]
+    public class CountriesE
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int IdLogin { get; set; }
-        public string s_userEmail { get; set; }
-        public string s_userPassword { get; set; }
-        public int fk_tblusers { get; set; }
-
+        public int id { get; set; }
+        public string s_country_name { get; set; }
     }
 }

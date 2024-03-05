@@ -3,6 +3,7 @@ using UNAC.AppSalud.Domain.Entities.AnswersBankE;
 using UNAC.AppSalud.Domain.Entities.DiagnosisFormAnswersE;
 using UNAC.AppSalud.Domain.Entities.DiagnosticFormE;
 using UNAC.AppSalud.Domain.Entities.IllnessesE;
+using UNAC.AppSalud.Domain.Entities.LocationE;
 using UNAC.AppSalud.Domain.Entities.LoginE;
 using UNAC.AppSalud.Domain.Entities.MedicinesE;
 using UNAC.AppSalud.Domain.Entities.MedicinesRegistrationE;
@@ -42,5 +43,8 @@ namespace UNAC.AppSalud.Infrastructure
         public virtual DbSet<IllnessesE> IllnessesEs { get; set; }
         public virtual DbSet<QuestionsBankE> QuestionsBankE { get; set; }
         public virtual DbSet<AnswersBankE> AnswersBankE { get; set; }
+        public virtual DbSet<CountriesE> CountriesEs { get; set; }
+        public virtual DbSet<StatesE> StatesEs { get; set; }
+        public virtual DbSet<CitiesE> CitiesEs { get; set; }
     }
 }

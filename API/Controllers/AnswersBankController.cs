@@ -101,7 +101,7 @@ namespace UNAC.AppSalud.API.Controllers
                 throw;
             }
         }
-        [HttpPost("Delete_AnswerBank")]
+        [HttpDelete("Delete_AnswerBank")]
         public async Task<IActionResult> DeleteAnswerBank(int IdAnswerBank)
         {
             try

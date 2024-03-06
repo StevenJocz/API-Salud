@@ -115,7 +115,7 @@ namespace UNAC.AppSalud.Infrastructure.EmailServices
                     return  new EmailRespose
                     {
                             resultado = true,
-                            message = "Se ha enviado un correo electrónico correctamente.",
+                            message = "Correo electrónico enviado con exitosamente.",
                             codigo = codigo
                     };
                 }

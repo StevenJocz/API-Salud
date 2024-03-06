@@ -41,7 +41,7 @@ namespace UNAC.AppSalud.API.Controllers
                     return BadRequest(new
                     {
                         resultado = false,
-                        message = "No se logro crear el usuario correctamente. Por favor, inténtalo nuevamente.",
+                        message = "No se logró registrar el usuario correctamente, Por favor, intentelo mas tarde.",
                     });
                    
                 }

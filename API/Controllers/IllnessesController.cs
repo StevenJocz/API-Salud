@@ -102,7 +102,7 @@ namespace UNAC.AppSalud.API.Controllers
             }
         }
 
-        [HttpPost("Delete_Illnes")]
+        [HttpDelete("Delete_Illnes")]
         public async Task<IActionResult> DeleteIllnes(int IdIllnes) 
         {
             try

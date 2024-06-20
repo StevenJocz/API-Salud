@@ -64,7 +64,7 @@ namespace UNAC.AppSalud.API.Application
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = claims,
-                    Expires = DateTime.UtcNow.AddMinutes(1),
+                    Expires = DateTime.UtcNow.AddDays(1),
                     SigningCredentials = credencialesToken
                 };
 
@@ -94,7 +94,7 @@ namespace UNAC.AppSalud.API.Application
                     idusuario = IdUsuario,
                     s_token = Token,
                     ts_fechacreacion = DateTime.UtcNow,
-                    ts_fechaexpiracion = DateTime.UtcNow.AddMinutes(2)
+                    ts_fechaexpiracion = DateTime.UtcNow.AddDays(1)
                 };
 
                 await _context.HistorialrefreshtokenEs.AddAsync(historialRefreshToken);
